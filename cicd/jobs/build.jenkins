@@ -1,0 +1,19 @@
+#!/usr/bin/env groovy
+
+pipelineJob('build-java-application') {
+    displayName('Build Java App')
+
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url('https://github.com/princemishra5/sample-java-webapp.git')
+                    }
+                    branches('*/master')
+                }
+            }
+            scriptPath('cicd/pipelines/build.jenkins')
+        }
+    }
+}
