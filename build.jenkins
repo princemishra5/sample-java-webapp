@@ -22,7 +22,8 @@ podTemplate(label: label,
 
             stage('Build') {
                 container('maven') {
-                    sh 'mvn clean install -DskipTests'
+                    sh 'git branch'
+                    sh 'mvn --version'
                 }
             }
         }
