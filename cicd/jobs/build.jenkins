@@ -1,14 +1,15 @@
 #!/usr/bin/env groovy
 
-pipelineJob('build-java-application') {
-    displayName('Build Java App')
+pipelineJob('build-jenkins-operator') {
+    displayName('Build jenkins-operator')
 
     definition {
         cpsScm {
             scm {
                 git {
                     remote {
-                        url('https://github.com/princemishra5/sample-java-webapp.git')
+                        url('https://github.com/jenkinsci/kubernetes-operator.git')
+                        credentials('jenkins-operator')
                     }
                     branches('*/master')
                 }
