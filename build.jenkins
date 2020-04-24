@@ -4,7 +4,7 @@ def label = "java-${UUID.randomUUID().toString()}"
 def home = "/home/jenkins"
 def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
-
+def MAVEN_OPTIONS = "-DskipTests"
 pipeline {
  agent any
  tools {
