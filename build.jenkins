@@ -5,27 +5,27 @@ def home = "/home/jenkins"
 def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
 
-podTemplate(label: label,
-        containers: [
+pipeline {
+ agent any
+ tools {
+   jdk 'jdk-8'
+   maven 'mvn35'
+ }
+ stages {
+   stage("Code checkout") {
+     steps {
+       script {
+            scm
+       }
+     }
+   }
+   stage('Build') {
+     steps {
 
-                containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', command: 'cat', ttyEnabled: true)
-        ]
-        ) {
-
-    node(label) {
-        dir(workdir) {
-            stage('Init') {
-                timeout(time: 3, unit: 'MINUTES') {
-                    checkout scm
-                }
-            }
-
-            stage('Build') {
-                container('maven') {
-                    sh 'git branch'
-                    sh 'mvn --version'
-                }
-            }
-        }
-    }
+       sh """
+       mvn clean install $MAVEN_OPTIONS
+       """
+     }
+   }
+}
 }
