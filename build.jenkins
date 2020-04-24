@@ -1,0 +1,42 @@
+#!/usr/bin/env groovy
+
+def label = "java-${UUID.randomUUID().toString()}"
+def home = "/home/jenkins"
+def workspace = "${home}/workspace/java"
+def workdir = "${workspace}/sample-java-webapp/"
+
+podTemplate(label: label,
+        containers: [
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
+                containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', command: 'cat', ttyEnabled: true),
+        ]
+        ) {
+
+    node(label) {
+        dir(workdir) {
+            stage('Init') {
+                timeout(time: 3, unit: 'MINUTES') {
+                    checkout scm
+                }
+            }
+
+            stage('Deployment') {
+                container('maven') {
+                    sh 'echo "not yet implemented"'
+                }
+            }
+
+            stage('Test') {
+                container('maven') {
+                    sh 'mvn test'
+                }
+            }
+
+            stage('Build') {
+                container('maven') {
+                    sh 'mvn clean install -DskipTests'
+                }
+            }
+        }
+    }
+}
