@@ -8,9 +8,9 @@ def workdir = "${workspace}/sample-java-webapp/"
 pipeline {
  agent any
  tools {
-   jdk 'jdk-8'
-   maven 'mvn35'
- }
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
+    }
  stages {
    stage("Code checkout") {
      steps {
