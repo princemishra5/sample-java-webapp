@@ -7,8 +7,7 @@ def workdir = "${workspace}/sample-java-webapp/"
 
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
-                containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', command: 'cat', ttyEnabled: true),
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine')
         ]
         ) {
 
@@ -21,10 +20,8 @@ podTemplate(label: label,
             }
 
             stage('Build') {
-                container('maven') {
-                    sh 'git branch'
-                    sh 'mvn --version'
-                }
+                sh 'git branch'
+                sh 'mvn clean install -DskipTests'
             }
         }
     }
