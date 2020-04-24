@@ -20,18 +20,6 @@ podTemplate(label: label,
                 }
             }
 
-            stage('Deployment') {
-                container('maven') {
-                    sh 'echo "not yet implemented"'
-                }
-            }
-
-            stage('Test') {
-                container('maven') {
-                    sh 'mvn test'
-                }
-            }
-
             stage('Build') {
                 container('maven') {
                     sh 'mvn clean install -DskipTests'
