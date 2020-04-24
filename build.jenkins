@@ -20,8 +20,10 @@ podTemplate(label: label,
             }
 
             stage('Build') {
-                sh 'git branch'
-                sh 'mvn clean install -DskipTests'
+                container('jnlp') {
+                    sh 'git branch'
+                    sh 'mvn --version'
+                }
             }
         }
     }
