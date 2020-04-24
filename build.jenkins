@@ -11,7 +11,8 @@ pipeline {
         maven 'maven'
      
     }
- stages {
+ 
+ dir(workdir){
    stage("Code checkout") {
      steps {
        script {
@@ -28,4 +29,5 @@ pipeline {
      }
    }
 }
+ 
 }
