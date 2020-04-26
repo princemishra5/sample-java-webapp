@@ -17,6 +17,7 @@ pipeline {
        sh """
        mvn clean install $MAVEN_OPTIONS
        """
+      sh 'docker --version'
      }
    }
 }
