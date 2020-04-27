@@ -21,12 +21,15 @@ podTemplate(label: label,
                 timeout(time: 3, unit: 'MINUTES') {
                     checkout scm
                 }
-                    script {
-System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "3800");
- }
+
             }
 
             stage('Build') {
+                    steps{
+                                                script {
+System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "3800");
+ }
+                    }
                 container('maven') {
                     sh 'mvn -B clean install -DskipTests'
                 }
