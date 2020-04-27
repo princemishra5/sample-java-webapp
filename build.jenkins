@@ -7,7 +7,7 @@ def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent'),
+                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent', args: '-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true'),
                 containerTemplate(name: 'maven', image: 'maven:3-alpine', command: 'cat', ttyEnabled: true),
         ],
         envVars: [
