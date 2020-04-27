@@ -7,7 +7,7 @@ def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
+                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent'),
                 containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
         ],
         envVars: [
