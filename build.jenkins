@@ -5,31 +5,44 @@ def home = "/home/jenkins"
 def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
-pipeline {
- agent any
- tools {
-   maven 'maven'
- }
- stages {
-   stage('Build') {
-     steps {
+podTemplate(label: label,
+        containers: [
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
+                containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
+        ],
+        envVars: [
+                envVar(key: 'GOPATH', value: workspace),
+        ],
+        ) {
 
-       sh """
-       mvn clean install $MAVEN_OPTIONS
-       """
-   }
-}
+    node(label) {
+        dir(workdir) {
+            stage('Init') {
+                timeout(time: 3, unit: 'MINUTES') {
+                    checkout scm
+                }
+                container('go') {
+                    sh 'apk --no-cache --update add make git gcc libc-dev'
+                }
+            }
 
-   stage('Building and pushing image') {
-       steps{
-         script {
-               docker.withRegistry('https://acrsharedcommon18166.azurecr.io/v2/', 'registryId') {
+            stage('Dep') {
+                container('go') {
+                    sh 'make dep'
+                }
+            }
 
-                 
-               }
-         }
-       }
-     }
-}
+            stage('Test') {
+                container('go') {
+                    sh 'make test'
+                }
+            }
 
+            stage('Build') {
+                container('go') {
+                    sh 'make build'
+                }
+            }
+        }
+    }
 }
