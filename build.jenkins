@@ -18,7 +18,7 @@ pipeline {
        mvn clean install $MAVEN_OPTIONS
        """
    }
-
+}
 
    stage('Building and pushing image') {
        steps{
@@ -34,4 +34,5 @@ pipeline {
        }
      }
 }
+
 }
