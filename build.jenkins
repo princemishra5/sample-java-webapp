@@ -20,19 +20,7 @@ pipeline {
    }
 }
 
-   stage('Building and pushing image') {
-       steps{
-         script {
-               docker.withRegistry('acrsharedcommon18166.azurecr.io/sample-java-app', 'registryId') {
-
-                   def customImage = docker.build("my-image:${env.BUILD_ID}")
-
-                   /* Push the container to the custom Registry */
-                   customImage.push()
-               }
-         }
-       }
-     }
+   
 }
 
 }
