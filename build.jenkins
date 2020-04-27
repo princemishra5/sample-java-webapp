@@ -8,10 +8,10 @@ def MAVEN_OPTIONS = "-DskipTests"
 podTemplate(label: label,
         containers: [
                 containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent'),
-                containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
+                containerTemplate(name: 'maven', image: 'maven:3-alpine', command: 'cat', ttyEnabled: true),
         ],
         envVars: [
-                envVar(key: 'GOPATH', value: workspace),
+                envVar(key: 'MVNPATH', value: workspace),
         ],
         ) {
 
@@ -21,26 +21,11 @@ podTemplate(label: label,
                 timeout(time: 3, unit: 'MINUTES') {
                     checkout scm
                 }
-                container('go') {
-                    sh 'apk --no-cache --update add make git gcc libc-dev'
-                }
-            }
-
-            stage('Dep') {
-                container('go') {
-                    sh 'make dep'
-                }
-            }
-
-            stage('Test') {
-                container('go') {
-                    sh 'make test'
-                }
             }
 
             stage('Build') {
-                container('go') {
-                    sh 'make build'
+                container('maven') {
+                    sh 'mvn clean install -DskipTests'
                 }
             }
         }
