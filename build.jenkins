@@ -5,32 +5,34 @@ def home = "/home/jenkins"
 def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
-podTemplate(label: label,
-        containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent', args: '-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true'),
-                containerTemplate(name: 'maven', image: 'maven:3-alpine', command: 'cat', ttyEnabled: true),
-        ],
-        envVars: [
-                envVar(key: 'MVNPATH', value: workspace),
-        ],
-        ) {
+pipeline {
+ agent any
+ tools {
+   maven 'maven'
+ }
+ stages {
+   stage('Build') {
+     steps {
 
-    node(label) {
-        dir(workdir) {
-            stage('Init') {
-                timeout(time: 3, unit: 'MINUTES') {
-                    checkout scm
-                }
+       sh """
+       mvn clean install $MAVEN_OPTIONS
+       """
+   }
+}
 
-            }
+   stage('Building and pushing image') {
+       steps{
+         script {
+               docker.withRegistry('acrsharedcommon18166.azurecr.io/sample-java-app', 'registryId') {
 
-            stage('Build') {
-               
-                container('maven') {
-                    sh 'echo hello world'    
-                    sh 'mvn -B clean install -DskipTests'
-                }
-            }
-        }
-    }
+                   def customImage = docker.build("my-image:${env.BUILD_ID}")
+
+                   /* Push the container to the custom Registry */
+                   customImage.push()
+               }
+         }
+       }
+     }
+}
+
 }
