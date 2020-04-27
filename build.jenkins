@@ -6,14 +6,10 @@ def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
 pipeline {
- agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v $HOME/.m2:/root/.m2'
-        }
-    }
+ agent any
  tools {
    maven 'maven'
+   docker 'docker'
  }
  stages {
    stage('Build') {
