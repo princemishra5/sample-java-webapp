@@ -5,22 +5,42 @@ def home = "/home/jenkins"
 def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
-pipeline {
- agent any
- tools {
-   maven 'maven'
- }
- stages {
-   stage('Build') {
-     steps {
+podTemplate(label: label,
+        containers: [
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
+                containerTemplate(name: 'maven', image: 'maven:3-alpine', command: 'cat', ttyEnabled: true),
+        ],
+        envVars: [
+                envVar(key: 'MVN_PATH', value: workspace),
+        ],
+        ) {
 
-       sh """
-       mvn clean install $MAVEN_OPTIONS
-       """
-   }
+    node(label) {
+        dir(workdir) {
+            stage('Init') {
+                timeout(time: 3, unit: 'MINUTES') {
+                    checkout scm
+                }
+            }
+
+            stage('Dep') {
+                container('maven') {
+                    sh 'echo "Deployment"'
+                }
+            }
+
+            stage('Test') {
+                container('maven') {
+                    sh 'echo "Test"'
+                }
+            }
+
+            stage('Build') {
+                container('maven') {
+                    sh 'mvn clean install -DskipTests'
+                }
+            }
+        }
+    }
 }
 
-   
-}
-
-}
