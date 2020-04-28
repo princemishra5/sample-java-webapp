@@ -37,7 +37,7 @@ podTemplate(label: label,
 
             stage('Build') {
                 container('jnlp') {
-                    sh 'mvn clean install -DskipTests'
+                    sh 'echo "build"'
                 }
             }
         }
