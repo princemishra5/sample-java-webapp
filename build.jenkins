@@ -7,8 +7,7 @@ def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
-                containerTemplate(name: 'maven', image: 'maven:3-alpine', command: 'cat', ttyEnabled: true),
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine')
         ],
         envVars: [
                 envVar(key: 'MVN_PATH', value: workspace),
@@ -18,25 +17,25 @@ podTemplate(label: label,
     node(label) {
         dir(workdir) {
             stage('Init') {
-                timeout(time: 3, unit: 'MINUTES') {
+                timeout(time: 1, unit: 'MINUTES') {
                     checkout scm
                 }
             }
 
             stage('Dep') {
-                container('maven') {
+                container('jnlp') {
                     sh 'echo "Deployment"'
                 }
             }
 
             stage('Test') {
-                container('maven') {
+                container('jnlp') {
                     sh 'echo "Test"'
                 }
             }
 
             stage('Build') {
-                container('maven') {
+                container('jnlp') {
                     sh 'mvn clean install -DskipTests'
                 }
             }
