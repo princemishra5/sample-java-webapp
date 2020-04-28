@@ -5,42 +5,38 @@ def home = "/home/jenkins"
 def workspace = "${home}/workspace/java"
 def workdir = "${workspace}/sample-java-webapp/"
 def MAVEN_OPTIONS = "-DskipTests"
-podTemplate(label: label,
-        containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
-                containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
-        ],
-        envVars: [
-                envVar(key: 'MVN_PATH', value: workspace),
-        ],
-        ) {
+podTemplate(
+    label: 'slave-pod',
+    inheritFrom: 'default',
+    containers: [
+        containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: 'docker', image: 'docker:18.02', ttyEnabled: true, command: 'cat')
+    ],
+    volumes: [
+        hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
+        hostPathVolume(hostPath: '/root/.m2', mountPath: '/root/.m2')
+    ]
+) {
+    node('slave-pod') {
+        def commitId
+        stage ('Init') {
+            checkout scm
+            commitId = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+        }
 
-    node(label) {
-        dir(workdir) {
-            stage('Init') {
-                timeout(time: 1, unit: 'MINUTES') {
-                    checkout scm
-                }
+        stage ('Build') {
+            container ('maven') {
+                sh 'mvn clean install'
             }
+        }
 
-            stage('Dep') {
-                container('jnlp') {
-                    sh 'echo "Deployment"'
-                }
-            }
-
-            stage('Test') {
-                container('jnlp') {
-                    sh 'echo "Test"'
-                }
-            }
-
-            stage('Build') {
-                container('maven') {
-                    sh 'echo "build"'
+        stage ('Docker build and push') {
+            container ('docker') {
+                          sh 'echo "hello"'
                 }
             }
         }
     }
 }
+
 
