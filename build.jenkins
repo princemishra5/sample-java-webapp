@@ -32,10 +32,22 @@ podTemplate(
         stage ('Docker build and push') {
             container ('docker') {
                      sh "docker build -t ${PROJECT}:${commitId} ."
-                     sh "ls"
+                     
                 }
             }
         }
+    
+    
+        stage ('Staging') {
+            sh 'Deploying to staging environment'
+        }
+    
+    
+        stage ('Production') {
+            sh 'Deploying to production environment'
+        }
+    
+        
     }
 
 
