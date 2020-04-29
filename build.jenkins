@@ -38,12 +38,12 @@ podTemplate(
         
         
         stage ('Staging') {
-            sh 'Deploying to staging environment'
+            sh 'echo "Deploying to staging environment"'
         }
         
         
          stage ('Production') {
-            sh 'Deploying to production environment'
+            sh 'echo "Deploying to production environment"'
         }
         
         
