@@ -1,10 +1,9 @@
 #!/usr/bin/env groovy
-
-def label = "java-${UUID.randomUUID().toString()}"
+def PROJECT = "sample-java-app"
+def label = "${PROJECT}-${UUID.randomUUID().toString()}"
 def MAVEN_OPTIONS = "-DskipTests"
 podTemplate(
     label: label,
-    inheritFrom: 'default',
     containers: [
         containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
         containerTemplate(name: 'docker', image: 'docker:18.02', ttyEnabled: true, command: 'cat')
@@ -16,21 +15,23 @@ podTemplate(
 ) {
     node(label) {
         def commitId
-        stage ('Extract') {
+        stage ('Checkout') {
             checkout scm
             commitId = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         }
 
         stage ('Build') {
             container ('maven') {
-                sh 'mvn clean install $MAVEN_OPTIONS '
+                sh """
+                mvn clean install $MAVEN_OPTIONS
+                """
             }
         }
 
         stage ('Docker build and push') {
             container ('docker') {
-                     sh 'pwd'
-                     sh 'ls'
+                     sh "docker build -t ${PROJECT}:${commitId} ."
+                     sh "ls"
                 }
             }
         }
