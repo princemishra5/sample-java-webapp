@@ -28,6 +28,14 @@ podTemplate(
                 """
             }
         }
+        
+        stage ('Test') {
+            container ('maven') {
+                sh """
+                mvn tests
+                """
+            }
+        }
 
         stage ('Docker build and push') {
             container ('docker') {
