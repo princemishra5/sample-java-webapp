@@ -35,17 +35,21 @@ podTemplate(
                      
                 }
             }
-        }
-    
-    
+        
+        
         stage ('Staging') {
             sh 'Deploying to staging environment'
         }
-    
-    
-        stage ('Production') {
+        
+        
+         stage ('Production') {
             sh 'Deploying to production environment'
         }
+        
+        
+        
+        }
+
     
         
     }
