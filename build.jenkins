@@ -32,7 +32,7 @@ podTemplate(
         stage ('Test') {
             container ('maven') {
                 sh """
-                mvn tests
+                mvn test
                 """
             }
         }
